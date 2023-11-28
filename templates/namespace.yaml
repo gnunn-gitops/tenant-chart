@@ -3,32 +3,10 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-{{- if or $v.labels $.Values.default.labels }}
-  labels:
-{{- end }}
-{{- if $v.labels }}
-{{- with $v.labels }}
-{{ toYaml . | indent 4 }}
-{{- end }}
-{{- end }}
-{{- if $.Values.default.labels }}
-{{- with $.Values.default.labels }}
-{{ toYaml . | indent 4 }}
-{{- end }}
-{{- end }}
-{{- if or $v.annotations $.Values.default.annotations }}
-  annotations:
-{{- end }}
-{{- if $v.annotations }}
-{{- with $v.annotations }}
-{{ toYaml . | indent 4 }}
-{{- end }}
-{{- end }}
-{{- if $.Values.default.annotations }}
-{{- with $.Values.default.annotations }}
-{{ toYaml . | indent 4 }}
-{{- end }}
-{{- end }}
+{{- $labelData := dict "namespace" $v "values" $.Values }}
+{{- include "merge-labels" $labelData }}
+{{- $annotationData := dict "namespace" $v "values" $.Values }}
+{{- include "merge-annotations" $annotationData }}
   name: {{ $.Values.tenant }}-{{ $k }}
 ---
 {{- end }}
