@@ -1,0 +1,27 @@
+{{- range $k, $v := .Values.namespaces }}
+{{- $groups := list -}}
+{{- if and $v.rbac $v.rbac.adminGroups }}
+{{-   $groups = $v.rbac.adminGroups -}}
+{{- else if and $.Values.default $.Values.default.rbac $.Values.default.rbac.adminGroups }}
+{{-   $groups = $.Values.default.rbac.adminGroups -}}
+{{- end}}
+{{- if $groups }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ $.Values.tenant }}-admin
+  namespace: {{ $.Values.tenant }}-{{ $k }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admin
+subjects:
+{{- range $groups}}
+- apiGroup: rbac.authorization.k8s.io
+  kind: Group
+  name: {{ . }}
+{{- end}}
+{{- end}}
+---
+{{- end}}

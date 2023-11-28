@@ -1,0 +1,21 @@
+tenant: product-catalog
+
+default:
+    annotations:
+      app.openshift.io/vcs-uri: https://github.com/gnunn-gitops/product-catalog
+      app.openshift.io/vcs-ref: main
+    labels:
+      argocd.argoproj.io/managed-by: gitops
+    rbac:
+      adminGroups:
+        - product-catalog-admins
+      editGroups:
+        - product-catalog-users
+
+namespaces:
+
+  dev: {}
+
+  test: {}
+
+  prod: {}

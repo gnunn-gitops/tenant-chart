@@ -1,0 +1,10 @@
+apiVersion: v2
+name: tenant
+version: 0.1.0
+description: Generic chart for provisioning tenant resources
+type: application
+kubeVersion: '>=1.14.6'
+sources:
+ - https://github.com/gnunn-gitops/tenant-chart
+maintainers:
+- name: Gerald Nunn

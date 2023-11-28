@@ -1,0 +1,34 @@
+{{- range $k, $v := .Values.namespaces }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+{{- if or $v.labels $.Values.default.labels }}
+  labels:
+{{- end }}
+{{- if $v.labels }}
+{{- with $v.labels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+{{- end }}
+{{- if $.Values.default.labels }}
+{{- with $.Values.default.labels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+{{- end }}
+{{- if or $v.annotations $.Values.default.annotations }}
+  annotations:
+{{- end }}
+{{- if $v.annotations }}
+{{- with $v.annotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+{{- end }}
+{{- if $.Values.default.annotations }}
+{{- with $.Values.default.annotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+{{- end }}
+  name: {{ $.Values.tenant }}-{{ $k }}
+---
+{{- end }}
