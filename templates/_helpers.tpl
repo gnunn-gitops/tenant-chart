@@ -31,3 +31,15 @@
 {{- end }}
 {{- end }}
 {{- end -}}
+
+{{/* Create operator group */}}
+{{- define "create-operator-group" -}}
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ . }}
+  namespace: {{ . }}
+spec:
+  targetNamespaces:
+    - {{ . }}
+{{- end -}}

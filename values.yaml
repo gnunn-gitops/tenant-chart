@@ -44,3 +44,4 @@ namespaces:
     annotations:
       openshift.io/description: Project for monitoring tools of product catalog application
       openshift.io/display-name: Product Catalog Monitor
+    operatorGroup: true

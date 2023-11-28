@@ -1,4 +1,5 @@
 {{- range $k, $v := .Values.namespaces }}
+{{- $namespace := printf "%s-%s" $.Values.tenant $k }}
 ---
 apiVersion: v1
 kind: Namespace
@@ -7,6 +8,10 @@ metadata:
 {{- include "merge-labels" $labelData }}
 {{- $annotationData := dict "namespace" $v "values" $.Values }}
 {{- include "merge-annotations" $annotationData }}
-  name: {{ $.Values.tenant }}-{{ $k }}
+  name: {{ $namespace }}
 ---
+{{- if $v.operatorGroup }}
+{{- include "create-operator-group" $namespace }}
+---
+{{- end}}
 {{- end }}
