@@ -7,6 +7,7 @@ default:
     labels:
       argocd.argoproj.io/managed-by: gitops
       tenant: product-catalog
+    networkPolicy: true
     rbac:
       adminGroups:
         - product-catalog-admins

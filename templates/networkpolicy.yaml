@@ -1,4 +1,5 @@
 {{- range $k, $v := .Values.namespaces }}
+{{- if or $v.networkPolicy $.Values.default.networkPolicy }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -40,4 +41,5 @@ spec:
   - from:
     - podSelector: {}
   podSelector: {}
+{{- end }}
 {{- end }}
