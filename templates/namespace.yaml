@@ -9,5 +9,4 @@ metadata:
 {{- $annotationData := dict "namespace" $v "values" $.Values }}
 {{- include "merge-annotations" $annotationData }}
   name: {{ $namespace }}
----
 {{- end }}

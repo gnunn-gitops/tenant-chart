@@ -23,5 +23,4 @@ subjects:
   name: {{ . }}
 {{- end}}
 {{- end}}
----
 {{- end}}
