@@ -10,8 +10,4 @@ metadata:
 {{- include "merge-annotations" $annotationData }}
   name: {{ $namespace }}
 ---
-{{- if $v.operatorGroup }}
-{{- include "create-operator-group" $namespace }}
----
-{{- end}}
 {{- end }}

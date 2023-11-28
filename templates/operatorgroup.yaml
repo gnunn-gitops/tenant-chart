@@ -1,0 +1,14 @@
+{{- range $k, $v := .Values.namespaces }}
+{{- if $v.operatorGroup }}
+{{- $namespace := printf "%s-%s" $.Values.tenant $k }}
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ $namespace }}
+  namespace: {{ $namespace }}
+spec:
+  targetNamespaces:
+    - {{ $namespace }}
+{{- end }}
+{{- end }}
