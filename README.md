@@ -10,6 +10,10 @@ overriding of resources provided. Basically the philosphy is to make automatic i
 and if you want to customize something simply don't include enable it in the chart and just add it as a
 separate resource to the kustomization.
 
+### Package chart
+
+Use `helm package .`` to package the chart.
+
 ### Other Examples
 
 There are other examples of Helm charts for this including:
