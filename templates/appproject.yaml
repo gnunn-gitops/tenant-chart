@@ -11,36 +11,38 @@ spec:
   destinations:
 {{- range $k, $v := .Values.namespaces }}
 {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
-  - namespace: '{{ $namespace }}'
-{{- if and $v.argocd $v.argocd.cluster}}
-    server: '{{ $v.argocd.cluster }}'
-{{- else if and $.Values.default.argocd $.Values.default.argocd.cluster}}
-    server: '{{ $.Values.default.argocd.cluster }}'
+  - namespace: {{ $namespace }}
+{{- if and $v.argocd $v.argocd.cluster $v.argocd.cluster.name}}
+    name: {{ $v.argocd.cluster.name }}
+{{- else if and $.Values.default.argocd $.Values.default.argocd.cluster $.Values.default.argocd.cluster.name}}
+    name: {{ $.Values.default.argocd.cluster.name }}
 {{- end}}
 {{- end}}
+{{- if $.Values.argocd.sourceRepos }}
   sourceRepos:
-  - '*'
+    {{ toYaml $.Values.argocd.sourceRepos }}
+{{- end }}
   sourceNamespaces:
-  - product-catalog-gitops
+  - {{ $.Values.tenant }}-gitops
   roles:
     - description: {{ $.Values.tenant }} admins
       name: admin
       groups:
-        - {{ $.Values.tenant }}-admins
+        {{ toYaml $.Values.argocd.adminGroups }}
       policies:
         - p, proj:{{ $.Values.tenant }}:admin, applications, *, {{ $.Values.tenant }}/*, allow
         - p, proj:{{ $.Values.tenant }}:admin, exec, create, {{ $.Values.tenant }}/*, allow
     - description: {{ $.Values.tenant }} users
       name: user
       groups:
-        - {{ $.Values.tenant }}-users
+        {{ toYaml $.Values.argocd.userGroups }}
       policies:
         - p, proj:{{ $.Values.tenant }}:user, applications, get, {{ $.Values.tenant }}/*, allow
         - p, proj:{{ $.Values.tenant }}:user, applications, sync, {{ $.Values.tenant }}/*, allow
     - description: Pipeline accounts
       name: pipeline
       groups:
-        - {{ $.Values.tenant }}-pipeline
+        {{ toYaml $.Values.argocd.pipelineGroups }}
       policies:
         - p, proj:{{ $.Values.tenant }}:pipeline, applications, get, {{ $.Values.tenant }}/*, allow
         - p, proj:{{ $.Values.tenant }}:pipeline, applications, sync, {{ $.Values.tenant }}/*, allow

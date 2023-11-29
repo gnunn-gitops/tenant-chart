@@ -9,9 +9,7 @@
 {{- end}}
 {{- $labels := merge $nsLabels $defaultLabels }}
   labels:
-{{- with $labels }}
-{{ toYaml . | indent 4 }}
-{{- end }}
+{{ toYaml $labels | indent 4 }}
 {{- end }}
 {{- end -}}
 
@@ -26,8 +24,6 @@
 {{- end}}
 {{- $annotations := merge $nsAnnotations $defaultAnnotations }}
   annotations:
-{{- with $annotations }}
-{{ toYaml . | indent 4 }}
-{{- end }}
+{{ toYaml $annotations | indent 4 }}
 {{- end }}
 {{- end -}}
