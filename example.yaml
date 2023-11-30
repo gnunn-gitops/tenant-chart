@@ -1,0 +1,78 @@
+tenant: product-catalog
+
+# Defaults for namespaces to avoid repetition
+default:
+    # Destination for Argo CD (i.e. server)
+    argocd:
+      cluster:
+        name: in-cluster
+    # Annotations applied to all namespaces, merged with annotations defined on namespace
+    annotations:
+      app.openshift.io/vcs-uri: https://github.com/gnunn-gitops/product-catalog
+      app.openshift.io/vcs-ref: main
+    # Labels applied to all namespaces, merged with labels defined on namespace
+    labels:
+      argocd.argoproj.io/managed-by: gitops
+      tenant: product-catalog
+    networkPolicy: true
+    # Default rbac for all projects, could be overridden on a namespace by namespace level
+    # adminGroups, editGroups and viewGroups will be granted admin, edit, view cluster roles respectively
+    rbac:
+      adminGroups:
+        - product-catalog-admins
+      editGroups:
+        - product-catalog-users
+
+# Configuration for shared Argo CD, generates AppProject to cover tenant requirements
+argocd:
+  # Namespace where the tenant Argo CD is located, if
+  # set an AppProject for the tenant will be created
+  namespace: gitops
+  # Repositories the tenant is limited to
+  sourceRepos:
+    - '*'
+  # Groups for which users will be admins of the AppProject
+  adminGroups:
+   - product-catalog-admins
+  # Groups for which users will be users of the AppProject
+  userGroups:
+   - product-catalog-users
+  pipelineGroups:
+   - product-catalog-pipeline
+
+namespaces:
+
+  dev:
+    quota: medium
+    annotations:
+      app.openshift.io/vcs-uri: https://github.com/gnunn-gitops/product-catalog
+      app.openshift.io/vcs-ref: main
+
+  test:
+    quota: medium
+    annotations:
+      openshift.io/description: Project for test environment of product catalog application
+      openshift.io/display-name: Product Catalog Test
+
+  prod:
+    quota: medium
+    annotations:
+      openshift.io/description: Project for production environment of product catalog application
+      openshift.io/display-name: Product Catalog Prod
+
+  cicd:
+    annotations:
+      openshift.io/description: Project for ci/cd tools for product catalog application
+      openshift.io/display-name: Product Catalog CI/CD
+
+  gitops:
+    annotations:
+      openshift.io/description: Project for gitops tool for product catalog team
+      openshift.io/display-name: Product Catalog GitOps
+
+  monitor:
+    annotations:
+      openshift.io/description: Project for monitoring tools of product catalog application
+      openshift.io/display-name: Product Catalog Monitor
+    # If operatorGroup for namespace is required to be created
+    operatorGroup: true

@@ -8,6 +8,8 @@ kind: ResourceQuota
 metadata:
   name: quota
   namespace: {{ $namespace }}
+  labels:
+    size: small
 spec:
   hard:
     requests.cpu: "2"
@@ -19,6 +21,8 @@ kind: "LimitRange"
 metadata:
   name: limitrange
   namespace: {{ $namespace }}
+  labels:
+    size: small
 spec:
   limits:
     - type: "Container"
@@ -34,6 +38,8 @@ kind: ResourceQuota
 metadata:
   name: quota
   namespace: {{ $namespace }}
+  labels:
+    size: medium
 spec:
   hard:
     requests.cpu: "4"
@@ -45,6 +51,8 @@ kind: "LimitRange"
 metadata:
   name: limitrange
   namespace: {{ $namespace }}
+  labels:
+    size: medium
 spec:
   limits:
     - type: "Container"
@@ -60,6 +68,8 @@ kind: ResourceQuota
 metadata:
   name: quota
   namespace: {{ $namespace }}
+  labels:
+    size: large
 spec:
   hard:
     requests.cpu: "8"
@@ -71,6 +81,8 @@ kind: "LimitRange"
 metadata:
   name: limitrange
   namespace: {{ $namespace }}
+  labels:
+    size: large
 spec:
   limits:
     - type: "Container"
