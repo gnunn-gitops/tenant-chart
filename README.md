@@ -10,6 +10,49 @@ overriding of resources provided. Basically the philosphy is to make automatic i
 and if you want to customize something simply don't include enable it in the chart and just add it as a
 separate resource to the kustomization.
 
+Credit to Thomas Jungbauer for the original concepts linked in his blog article below.
+
+### ApplicationSet
+
+Each tenant gets their own version of the chart that specifies the namespaces and resources required for that tenant. These
+can be organized into a directory structure in git and then an ApplicationSet can be used with the git generator to
+automatically generate the tenant applications.
+
+Here is an [example](https://github.com/gnunn-gitops/cluster-config/blob/main/clusters/overlays/local.home/components/tenants/appset.yaml) ApplicationSet from my cluster-config repository:
+
+```
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: tenants
+  namespace: openshift-gitops
+spec:
+  generators:
+  - git:
+      directories:
+      - path: tenants/**/base
+      repoURL: https://github.com/gnunn-gitops/cluster-config
+      revision: main
+  goTemplate: true
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  template:
+    metadata:
+      name: tenant-{{ index .path.segments 1 | normalize }}
+    spec:
+      destination:
+        name: in-cluster
+        namespace: default
+      project: cluster-config
+      source:
+        path: '{{ .path.path }}'
+        repoURL: https://github.com/gnunn-gitops/cluster-config
+      syncPolicy:
+        automated:
+          selfHeal: true
+
+```
+
 ### Package chart
 
 Use `helm package .`` to package the chart.
