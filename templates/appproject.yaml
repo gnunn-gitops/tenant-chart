@@ -1,4 +1,5 @@
 {{- if and $.Values.argocd $.Values.argocd.namespace}}
+{{- $cluster_list:= list }}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -14,8 +15,14 @@ spec:
   - namespace: {{ $namespace }}
 {{- if and $v.argocd $v.argocd.cluster $v.argocd.cluster.name}}
     name: {{ $v.argocd.cluster.name }}
+    {{- if not (has $v.argocd.cluster.name $cluster_list) }}
+    {{- $cluster_list = append $cluster_list $v.argocd.cluster.name  }}
+    {{- end}}
 {{- else if and $.Values.default.argocd $.Values.default.argocd.cluster $.Values.default.argocd.cluster.name}}
     name: {{ $.Values.default.argocd.cluster.name }}
+    {{- if not (has $.Values.default.argocd.cluster.name $cluster_list) }}
+    {{- $cluster_list = append $cluster_list $.Values.default.argocd.cluster.name }}
+    {{- end }}
 {{- end}}
 {{- end}}
 {{- if $.Values.argocd.sourceRepos }}
@@ -32,6 +39,9 @@ spec:
       policies:
         - p, proj:{{ $.Values.tenant }}:admin, applications, *, {{ $.Values.tenant }}/*, allow
         - p, proj:{{ $.Values.tenant }}:admin, exec, create, {{ $.Values.tenant }}/*, allow
+        {{- range $v := $cluster_list }}
+        - p, proj:{{ $.Values.tenant }}:admin, clusters, get, {{ $v }}, allow
+        {{- end }}
     - description: {{ $.Values.tenant }} users
       name: user
       groups:
@@ -39,6 +49,9 @@ spec:
       policies:
         - p, proj:{{ $.Values.tenant }}:user, applications, get, {{ $.Values.tenant }}/*, allow
         - p, proj:{{ $.Values.tenant }}:user, applications, sync, {{ $.Values.tenant }}/*, allow
+        {{- range $v := $cluster_list }}
+        - p, proj:{{ $.Values.tenant }}:admin, clusters, get, {{ $v }}, allow
+        {{- end }}
     - description: Pipeline accounts
       name: pipeline
       groups:
