@@ -40,6 +40,19 @@ argocd:
   pipelineGroups:
    - product-catalog-pipeline
 
+# Will create a ClusterSecretStore scoped to just the tenants namespaces that
+# is backed by a secret in the platform tenant-secrets namespace
+
+externalSecrets:
+  # Key where the tenant's token required to access secret store is stored
+  tenantTokenKey: TENANT_PRODUCT_CATALOG_DOPPLER_TOKEN
+  # ClusterSecretStore to use to retrieve token, must already exist
+  tenantClusterSecretStore: doppler-cluster
+  # Namespace where to create secret with token to access tenant's secret store. This can be a
+  # namespace created by the chart or a separate existing namespace if you don't want the tenant to
+  # have access to it.
+  tenantSecretNamespace: tenant-secrets
+
 namespaces:
 
   dev:

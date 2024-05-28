@@ -3,4 +3,6 @@ default: {}
 # Configuration for shared Argo CD, generates AppProject to cover tenant requirements
 argocd: {}
 
+externalSecrets: {}
+
 namespaces: {}
