@@ -44,13 +44,12 @@ argocd:
 # is backed by a secret in the platform tenant-secrets namespace
 
 externalSecrets:
-  # Key where the tenant's token required to access secret store is stored
-  tenantTokenKey: TENANT_PRODUCT_CATALOG_DOPPLER_TOKEN
-  # ClusterSecretStore to use to retrieve token, must already exist
+  # ClusterSecretStore to use to retrieve tenant's doppler token, must already exist
   tenantClusterSecretStore: doppler-cluster
   # Namespace where to create secret with token to access tenant's secret store. This can be a
-  # namespace created by the chart or a separate existing namespace if you don't want the tenant to
-  # have access to it.
+  # namespace created by the chart or a separate existing namespace (recommended) if you don't want the tenant to
+  # have access to it. If a separate namespace then a process needs to be added to copy the secret
+  # to the desired namespace
   tenantSecretNamespace: tenant-secrets
 
 namespaces:
@@ -74,6 +73,10 @@ namespaces:
       openshift.io/display-name: Product Catalog Prod
 
   cicd:
+    externalSecrets:
+      # Key where the tenant's token required to access secret store is stored
+      tenantTokenKey: TENANT_PRODUCT_CATALOG_DOPPLER_TOKEN
+
     annotations:
       openshift.io/description: Project for ci/cd tools for product catalog application
       openshift.io/display-name: Product Catalog CI/CD
