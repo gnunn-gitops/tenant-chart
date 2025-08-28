@@ -73,10 +73,6 @@ namespaces:
       openshift.io/display-name: Product Catalog Prod
 
   cicd:
-    externalSecrets:
-      # Key where the tenant's token required to access secret store is stored
-      tenantTokenKey: TENANT_PRODUCT_CATALOG_DOPPLER_TOKEN
-
     annotations:
       openshift.io/description: Project for ci/cd tools for product catalog application
       openshift.io/display-name: Product Catalog CI/CD
