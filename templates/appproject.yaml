@@ -1,4 +1,9 @@
-{{- if and $.Values.argocd $.Values.argocd.namespace}}
+{{- range $k, $v := .Values.namespaces }}
+{{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
+{{- if eq $destination $.Values.cluster }}
+{{- if and (and $.Values.argocd $.Values.argocd.namespace) (eq $k "argocd") }}
+
+{{- $namespace := printf "%s-%s" $.Values.tenant $k }}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -9,14 +14,11 @@ metadata:
 spec:
   description: {{ $.Values.tenant }} project
   destinations:
-{{- range $k, $v := .Values.namespaces }}
+{{- range $k, $v := $.Values.namespaces }}
 {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
+{{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
   - namespace: {{ $namespace }}
-{{- if and $v.argocd $v.argocd.cluster $v.argocd.cluster.name}}
-    name: {{ $v.argocd.cluster.name }}
-{{- else if and $.Values.default.argocd $.Values.default.argocd.cluster $.Values.default.argocd.cluster.name}}
-    name: {{ $.Values.default.argocd.cluster.name }}
-{{- end}}
+    name: {{ $destination }}
 {{- end}}
 {{- if $.Values.argocd.sourceRepos }}
   sourceRepos:
@@ -46,4 +48,6 @@ spec:
       policies:
         - p, proj:{{ $.Values.tenant }}:pipeline, applications, get, {{ $.Values.tenant }}/*, allow
         - p, proj:{{ $.Values.tenant }}:pipeline, applications, sync, {{ $.Values.tenant }}/*, allow
+{{- end }}
+{{- end }}
 {{- end }}

@@ -1,6 +1,9 @@
 {{- range $k, $v := .Values.namespaces }}
 {{- if $v.operatorGroup }}
 {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
+{{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
+{{- if eq $destination $.Values.cluster }}
+
 ---
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
@@ -10,5 +13,6 @@ metadata:
 spec:
   targetNamespaces:
     - {{ $namespace }}
+{{- end }}
 {{- end }}
 {{- end }}

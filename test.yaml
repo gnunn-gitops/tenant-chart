@@ -1,0 +1,132 @@
+---
+# Source: tenant/templates/namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    openshift.io/display-name: Product Catalog Argo CD
+    tenant: product-catalog
+  name: product-catalog-argocd
+---
+# Source: tenant/templates/networkpolicy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-openshift-ingress
+  namespace: product-catalog-argocd
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          policy-group.network.openshift.io/ingress: ""
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---
+# Source: tenant/templates/networkpolicy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-from-openshift-monitoring
+  namespace: product-catalog-argocd
+spec:
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          network.openshift.io/policy-group: monitoring
+  podSelector: {}
+  policyTypes:
+  - Ingress
+---
+# Source: tenant/templates/networkpolicy.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-same-namespace
+  namespace: product-catalog-argocd
+spec:
+  ingress:
+  - from:
+    - podSelector: {}
+  podSelector: {}
+---
+# Source: tenant/templates/quotas.yaml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: quota
+  namespace: product-catalog-argocd
+  labels:
+    size: small
+spec:
+  hard:
+    requests.cpu: "2"
+    requests.memory: "1Gi"
+    limits.memory: "2Gi"
+---
+# Source: tenant/templates/quotas.yaml
+apiVersion: "v1"
+kind: "LimitRange"
+metadata:
+  name: limitrange
+  namespace: product-catalog-argocd
+  labels:
+    size: small
+spec:
+  limits:
+    - type: "Container"
+      default:
+        memory: "384Mi"
+      defaultRequest:
+        cpu: "100m"
+        memory: "256Mi"
+---
+# Source: tenant/templates/appproject.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: product-catalog
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/project-inherit: global
+spec:
+  description: product-catalog project
+  destinations:
+  - namespace: product-catalog-argocd
+    name: hub-prod-local
+  - namespace: product-catalog-cicd
+    name: workload-prod-local
+  - namespace: product-catalog-dev
+    name: workload-prod-local
+  - namespace: product-catalog-prod
+    name: workload-prod-local
+  - namespace: product-catalog-stage
+    name: workload-prod-local
+  sourceRepos:
+    - '*'
+  sourceNamespaces:
+  - product-catalog-gitops
+  roles:
+    - description: product-catalog admins
+      name: admin
+      groups:
+        - product-catalog-admins
+      policies:
+        - p, proj:product-catalog:admin, applications, *, product-catalog/*, allow
+        - p, proj:product-catalog:admin, exec, create, product-catalog/*, allow
+    - description: product-catalog users
+      name: user
+      groups:
+        - product-catalog-users
+      policies:
+        - p, proj:product-catalog:user, applications, get, product-catalog/*, allow
+        - p, proj:product-catalog:user, applications, sync, product-catalog/*, allow
+    - description: Pipeline accounts
+      name: pipeline
+      groups:
+        - product-catalog-pipeline
+      policies:
+        - p, proj:product-catalog:pipeline, applications, get, product-catalog/*, allow
+        - p, proj:product-catalog:pipeline, applications, sync, product-catalog/*, allow
