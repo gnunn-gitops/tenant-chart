@@ -1,5 +1,7 @@
 {{- range $k, $v := .Values.namespaces }}
 {{- if or $v.networkPolicy $.Values.default.networkPolicy }}
+{{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
+{{- if eq $destination $.Values.cluster }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -41,5 +43,6 @@ spec:
   - from:
     - podSelector: {}
   podSelector: {}
+{{- end }}
 {{- end }}
 {{- end }}

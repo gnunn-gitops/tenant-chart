@@ -1,9 +1,9 @@
 apiVersion: v2
 name: tenant
-version: 0.4.1
-description: Generic chart for provisioning tenant resources
+version: 2.1.0
+description: Generic chart for provisioning tenant resources when using Argo CD Agent architecture
 type: application
-kubeVersion: '>=1.14.6'
+kubeVersion: '>=1.32.1'
 sources:
  - https://github.com/gnunn-gitops/tenant-chart
 maintainers:

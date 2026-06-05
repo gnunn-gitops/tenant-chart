@@ -1,5 +1,7 @@
 {{- range $k, $v := .Values.namespaces }}
 {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
+{{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
+{{- if eq $destination $.Values.cluster }}
 ---
 apiVersion: v1
 kind: Namespace
@@ -10,3 +12,4 @@ metadata:
 {{- include "merge-annotations" $annotationData }}
   name: {{ $namespace }}
 {{- end }}
+{{- end}}

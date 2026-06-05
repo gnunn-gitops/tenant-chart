@@ -1,33 +1,19 @@
 tenant: product-catalog
+#cluster: workload-prod-local
+cluster: hub-prod-local
 
-# Defaults for namespaces to avoid repetition
 default:
-    # Destination for Argo CD (i.e. server)
-    argocd:
-      cluster:
-        name: in-cluster
-    # Annotations applied to all namespaces, merged with annotations defined on namespace
-    annotations:
-      app.openshift.io/vcs-uri: https://github.com/gnunn-gitops/product-catalog
-      app.openshift.io/vcs-ref: main
-    # Labels applied to all namespaces, merged with labels defined on namespace
-    labels:
-      argocd.argoproj.io/managed-by: gitops
-      tenant: product-catalog
-    networkPolicy: true
-    # Default rbac for all projects, could be overridden on a namespace by namespace level
-    # adminGroups, editGroups and viewGroups will be granted admin, edit, view cluster roles respectively
-    rbac:
-      adminGroups:
-        - product-catalog-admins
-      editGroups:
-        - product-catalog-users
+  destination: workload-prod-local
+  networkPolicy: true
+  quota: medium
+  # Labels applied to all namespaces, merged with labels defined on namespace
+  labels:
+    tenant: product-catalog
 
-# Configuration for shared Argo CD, generates AppProject to cover tenant requirements
 argocd:
   # Namespace where the tenant Argo CD is located, if
   # set an AppProject for the tenant will be created
-  namespace: gitops
+  namespace: argocd
   # Repositories the tenant is limited to
   sourceRepos:
     - '*'
@@ -40,51 +26,38 @@ argocd:
   pipelineGroups:
    - product-catalog-pipeline
 
-# Will create a ClusterSecretStore scoped to just the tenants namespaces that
-# is backed by a secret in the platform tenant-secrets namespace
-
-externalSecrets:
-  # ClusterSecretStore to use to retrieve tenant's doppler token, must already exist
-  tenantClusterSecretStore: doppler-cluster
-  # Namespace where to create secret with token to access tenant's secret store. This can be a
-  # namespace created by the chart or a separate existing namespace (recommended) if you don't want the tenant to
-  # have access to it. If a separate namespace then a process needs to be added to copy the secret
-  # to the desired namespace
-  tenantSecretNamespace: tenant-secrets
-
 namespaces:
 
   dev:
-    quota: medium
     annotations:
       app.openshift.io/vcs-uri: https://github.com/gnunn-gitops/product-catalog
       app.openshift.io/vcs-ref: main
+    labels:
+      openshift.io/display-name: Product Catalog Dev
 
-  test:
-    quota: medium
-    annotations:
-      openshift.io/description: Project for test environment of product catalog application
-      openshift.io/display-name: Product Catalog Test
+  stage:
+    labels:
+      openshift.io/display-name: Product Catalog Stage
 
   prod:
-    quota: medium
-    annotations:
-      openshift.io/description: Project for production environment of product catalog application
+    labels:
       openshift.io/display-name: Product Catalog Prod
 
   cicd:
-    annotations:
-      openshift.io/description: Project for ci/cd tools for product catalog application
-      openshift.io/display-name: Product Catalog CI/CD
+    labels:
+      openshift.io/display-name: Product Catalog CICD
 
-  gitops:
-    annotations:
-      openshift.io/description: Project for gitops tool for product catalog team
-      openshift.io/display-name: Product Catalog GitOps
+  argocd:
+    destination: hub-prod-local
+    labels:
+      openshift.io/display-name: Product Catalog Argo CD
+    quota: small
 
-  monitor:
-    annotations:
-      openshift.io/description: Project for monitoring tools of product catalog application
-      openshift.io/display-name: Product Catalog Monitor
-    # If operatorGroup for namespace is required to be created
-    operatorGroup: true
+extraObjects:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: "{{ .Release.Name }}-custom-config"
+    data:
+      environment: "production"
+      custom_key: "custom_value"

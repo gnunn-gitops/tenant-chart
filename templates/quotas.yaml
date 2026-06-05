@@ -1,6 +1,9 @@
 {{- range $k, $v := .Values.namespaces }}
 {{- $size := $v.quota | default $.Values.default.quota }}
 {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
+{{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
+{{- if eq $destination $.Values.cluster }}
+
 {{- if eq $size "small" }}
 ---
 apiVersion: v1
@@ -91,5 +94,6 @@ spec:
       defaultRequest:
         cpu: "200m"
         memory: "256Mi"
+{{- end}}
 {{- end}}
 {{- end}}
