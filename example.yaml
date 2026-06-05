@@ -52,3 +52,12 @@ namespaces:
     labels:
       openshift.io/display-name: Product Catalog Argo CD
     quota: small
+
+extraObjects:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: "{{ .Release.Name }}-custom-config"
+    data:
+      environment: "production"
+      custom_key: "custom_value"

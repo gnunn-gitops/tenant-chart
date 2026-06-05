@@ -1,46 +1,9 @@
-tenant: product-catalog
-#cluster: workload-prod-local
-cluster: hub-prod-local
+tenant: test
 
-default:
-  destination: workload-prod-local
-  networkPolicy: true
-  quota: medium
+default: {}
 
-argocd:
-  # Namespace where the tenant Argo CD is located, if
-  # set an AppProject for the tenant will be created
-  namespace: argocd
-  # Repositories the tenant is limited to
-  sourceRepos:
-    - '*'
-  # Groups for which users will be admins of the AppProject
-  adminGroups:
-   - product-catalog-admins
-  # Groups for which users will be users of the AppProject
-  userGroups:
-   - product-catalog-users
-  pipelineGroups:
-   - product-catalog-pipeline
+argocd: {}
 
-namespaces:
+namespaces: {}
 
-  dev:
-    annotations:
-      app.openshift.io/vcs-uri: https://github.com/gnunn-gitops/product-catalog
-      app.openshift.io/vcs-ref: main
-    displayName: Development Environment
-
-  stage:
-    displayName: Stage Environment
-
-  prod:
-    displayName: Production Environment
-
-  cicd:
-    displayName: Pipelines
-
-  argocd:
-    description: Argo CD
-    destination: hub-prod-local
-    quota: small
+extraObjects: []

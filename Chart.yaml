@@ -1,6 +1,6 @@
 apiVersion: v2
 name: tenant
-version: 2.0.0
+version: 2.1.0
 description: Generic chart for provisioning tenant resources when using Argo CD Agent architecture
 type: application
 kubeVersion: '>=1.32.1'
