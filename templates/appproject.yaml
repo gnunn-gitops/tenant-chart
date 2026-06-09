@@ -3,6 +3,13 @@
 {{- if eq $destination $.Values.cluster }}
 {{- if and (and $.Values.argocd $.Values.argocd.namespace) (eq $k "argocd") }}
 
+{{- $destinations := list -}}
+{{- range $k, $v := $.Values.namespaces }}
+  {{- $destinations = append $destinations (ternary .destination $.Values.default.destination (hasKey . "destination")) }}
+{{- end }}
+
+{{- $uniqueDestinations := $destinations | uniq }}
+
 {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
@@ -20,6 +27,13 @@ spec:
   - namespace: {{ $namespace }}
     name: {{ $destination }}
 {{- end}}
+  # The agent always needs the -argocd namespace for apps-in-any-namespace
+  # on all clusters so add it in for all destinations. The Agent will re-home this
+  # to in-cluster when it copies the AppProject over.
+{{- range $uniqueDestinations }}
+  - namespace: {{ $.Values.tenant }}-argocd
+    name: {{ . }}
+{{- end }}
 {{- if $.Values.argocd.sourceRepos }}
   sourceRepos:
     {{ toYaml $.Values.argocd.sourceRepos }}

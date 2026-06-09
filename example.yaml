@@ -1,6 +1,6 @@
 tenant: product-catalog
+cluster: hub-prod-local
 #cluster: workload-prod-local
-cluster: workload-prod-local
 
 default:
   destination: workload-prod-local
