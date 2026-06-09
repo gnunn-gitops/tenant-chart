@@ -1,6 +1,6 @@
 tenant: product-catalog
 #cluster: workload-prod-local
-cluster: hub-prod-local
+cluster: workload-prod-local
 
 default:
   destination: workload-prod-local
@@ -32,25 +32,24 @@ namespaces:
     annotations:
       app.openshift.io/vcs-uri: https://github.com/gnunn-gitops/product-catalog
       app.openshift.io/vcs-ref: main
-    labels:
-      openshift.io/display-name: Product Catalog Dev
+      openshift.io/display-name: "Product Catalog Dev"
 
   stage:
-    labels:
-      openshift.io/display-name: Product Catalog Stage
+    annotations:
+      openshift.io/display-name: "Product Catalog Stage"
 
   prod:
-    labels:
-      openshift.io/display-name: Product Catalog Prod
+    annotations:
+      openshift.io/display-name: "Product Catalog Prod"
 
   cicd:
-    labels:
-      openshift.io/display-name: Product Catalog CICD
+    annotations:
+      openshift.io/display-name: "Product Catalog CICD"
 
   argocd:
+    annotations:
+      openshift.io/display-name: "Product Catalog Argo CD"
     destination: hub-prod-local
-    labels:
-      openshift.io/display-name: Product Catalog Argo CD
     quota: small
 
 extraObjects:
