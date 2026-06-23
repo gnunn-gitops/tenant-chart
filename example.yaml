@@ -2,13 +2,12 @@ tenant: product-catalog
 cluster: hub-prod-local
 #cluster: workload-prod-local
 
+externalSecrets: true
+
 default:
   destination: workload-prod-local
   networkPolicy: true
   quota: medium
-  # Labels applied to all namespaces, merged with labels defined on namespace
-  labels:
-    tenant: product-catalog
 
 argocd:
   # Namespace where the tenant Argo CD is located, if

@@ -8,7 +8,6 @@
 {{- $defaultLabels = $.values.default.labels }}
 {{- end}}
 {{- $labels := merge $nsLabels $defaultLabels }}
-  labels:
 {{ toYaml $labels | indent 4 }}
 {{- end }}
 {{- end -}}

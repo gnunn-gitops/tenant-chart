@@ -6,6 +6,8 @@
 apiVersion: v1
 kind: Namespace
 metadata:
+  labels:
+    tenant: "{{ $.Values.tenant}}"
 {{- $labelData := dict "namespace" $v "values" $.Values }}
 {{- include "merge-labels" $labelData }}
 {{- $annotationData := dict "namespace" $v "values" $.Values }}
