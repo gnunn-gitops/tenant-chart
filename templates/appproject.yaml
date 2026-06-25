@@ -18,7 +18,7 @@ metadata:
   namespace: {{ $.Values.argocd.namespace }}
   labels:
     #argocd.argoproj.io/project-inherit: global
-    argocd-agent: true
+    argocd-agent: "true"
 spec:
   description: {{ $.Values.tenant }} project
   destinations:
