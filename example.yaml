@@ -2,7 +2,9 @@ tenant: product-catalog
 cluster: hub-prod-local
 #cluster: workload-prod-local
 
-externalSecrets: true
+externalSecrets:
+  enabled: true
+  tokenKey: PRODUCT_CATALOG
 
 default:
   destination: workload-prod-local
