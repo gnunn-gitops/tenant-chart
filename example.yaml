@@ -10,6 +10,11 @@ default:
   destination: workload-prod-local
   networkPolicy: true
   quota: medium
+  rbac:
+    adminGroups:
+    - product-catalog-admins
+    userGroups:
+    - product-catalog-users
 
 argocd:
   # Namespace where the tenant Argo CD is located, if
