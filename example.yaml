@@ -32,6 +32,10 @@ argocd:
   pipelineGroups:
    - product-catalog-pipeline
 
+acs:
+  cluster: hub-prod-local
+  adminGroup: product-catalog-admins
+
 namespaces:
 
   dev:

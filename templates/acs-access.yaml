@@ -1,0 +1,28 @@
+{{- if .Values.acs }}
+{{- if eq .Values.acs.cluster .Values.cluster }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: declarative-configurations-{{ .Values.tenant }}
+  namespace: rhacs-operator
+type: Opaque
+stringData:
+    {{ .Values.tenant }}-access-scope.yaml: |
+        name: {{ .Values.acs.adminGroup }}
+        description: Access rights for users that can manage {{ .Values.tenant }} namespaces
+        rules:
+            includedNamespaces:
+                {{- range $k, $v := $.Values.namespaces }}
+                {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
+                {{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
+                - namespaceName: {{ $namespace }}
+                  clusterName: {{ $destination }}
+                {{- end}}
+    {{ .Values.tenant }}-roles.yaml: |
+        name: {{ .Values.tenant }}
+        description: Administrators of {{ .Values.tenant }} namespaces
+        permissionSet: Namespace Administrator
+        accessScope: {{ .Values.acs.adminGroup }}
+        globalAccess: NO_ACCESS
+{{- end }}
+{{- end }}
