@@ -1,5 +1,15 @@
 {{- if .Values.acs }}
 {{- if eq .Values.acs.cluster .Values.cluster }}
+
+{{- $destinations := list -}}
+{{- range $k, $v := $.Values.namespaces }}
+  {{- $destinations = append $destinations (ternary .destination $.Values.default.destination (hasKey . "destination")) }}
+{{- end }}
+
+{{- $uniqueDestinations := $destinations | uniq }}
+
+{{- $tenantReadableName :=  .Values.tenant | replace "-" " " | title }}
+
 apiVersion: v1
 kind: Secret
 metadata:
@@ -8,21 +18,26 @@ metadata:
 type: Opaque
 data:
   {{ .Values.tenant }}-access-scope.yaml: |
-      name: {{ .Values.acs.adminGroup }}
-      description: Access rights for users that can manage {{ .Values.tenant }} namespaces
-      rules:
-        includedNamespaces:
-          {{- range $k, $v := $.Values.namespaces }}
-          {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
-          {{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
-          - namespaceName: {{ $namespace }}
-            clusterName: {{ $destination }}
-          {{- end}}
+    name: {{ $tenantReadableName }}
+    description: Access rights for users that can manage {{ .Values.tenant }} namespaces
+    rules:
+      included:
+        {{- range $cluster := $uniqueDestinations }}
+        - cluster: {{ $cluster }}
+          namespaces:
+        {{- range $k, $v := $.Values.namespaces }}
+        {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
+        {{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
+        {{- if eq $destination $cluster }}
+            - {{ $namespace }}
+        {{- end}}
+        {{- end}}
+        {{- end}}
   {{ .Values.tenant }}-roles.yaml: |
-      name: {{ .Values.tenant }}
-      description: Administrators of {{ .Values.tenant }} namespaces
-      permissionSet: Namespace Administrator
-      accessScope: {{ .Values.acs.adminGroup }}
-      globalAccess: NO_ACCESS
+    name: {{ $tenantReadableName }}
+    description: Administrators of {{ .Values.tenant }} namespaces
+    permissionSet: Namespace Administrator
+    accessScope: {{ $tenantReadableName }}
+    globalAccess: NO_ACCESS
 {{- end }}
 {{- end }}
