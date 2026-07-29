@@ -38,6 +38,5 @@ stringData:
     description: Administrators of {{ .Values.tenant }} namespaces
     permissionSet: Namespace Administrator
     accessScope: {{ $tenantReadableName }}
-    globalAccess: NO_ACCESS
 {{- end }}
 {{- end }}
