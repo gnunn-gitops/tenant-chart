@@ -16,7 +16,7 @@ metadata:
   name: declarative-configurations-{{ .Values.tenant }}
   namespace: rhacs-operator
 type: Opaque
-data:
+stringData:
   {{ .Values.tenant }}-access-scope.yaml: |
     name: {{ $tenantReadableName }}
     description: Access rights for users that can manage {{ .Values.tenant }} namespaces
