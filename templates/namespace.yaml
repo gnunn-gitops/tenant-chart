@@ -13,5 +13,11 @@ metadata:
 {{- $annotationData := dict "namespace" $v "values" $.Values }}
 {{- include "merge-annotations" $annotationData }}
   name: {{ $namespace }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argocd
+  namespace: {{ $namespace }}
 {{- end }}
 {{- end}}

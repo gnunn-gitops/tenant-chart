@@ -35,6 +35,22 @@ spec:
   - namespace: {{ $.Values.tenant }}-argocd
     name: {{ . }}
 {{- end }}
+  destinationServiceAccounts:
+{{- range $k, $v := $.Values.namespaces }}
+{{- $namespace := printf "%s-%s" $.Values.tenant $k }}
+{{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
+  - namespace: {{ $namespace }}
+    name: {{ $destination }}
+    defaultServiceAccount: argocd
+{{- end}}
+  # The agent always needs the -argocd namespace for apps-in-any-namespace
+  # on all clusters so add it in for all destinations. The Agent will re-home this
+  # to in-cluster when it copies the AppProject over.
+{{- range $uniqueDestinations }}
+  - namespace: {{ $.Values.tenant }}-argocd
+    name: {{ . }}
+    defaultServiceAccount: argocd
+{{- end }}
 {{- if $.Values.argocd.sourceRepos }}
   sourceRepos:
     {{ toYaml $.Values.argocd.sourceRepos }}
