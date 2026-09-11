@@ -40,7 +40,7 @@ spec:
 {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
 {{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
   - namespace: {{ $namespace }}
-    name: {{ $destination }}
+    server: https://kubernetes.default.svc
     defaultServiceAccount: argocd
 {{- end}}
   # The agent always needs the -argocd namespace for apps-in-any-namespace

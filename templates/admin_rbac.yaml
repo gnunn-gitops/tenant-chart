@@ -21,8 +21,7 @@ roleRef:
   name: admin
 subjects:
 # Service Account used for Argo CD Impersonation
-- apiGroup: rbac.authorization.k8s.io
-  kind: ServiceAccount
+- kind: ServiceAccount
   name: argocd
 {{- range $groups}}
 - apiGroup: rbac.authorization.k8s.io
