@@ -48,7 +48,7 @@ spec:
   # to in-cluster when it copies the AppProject over.
 {{- range $uniqueDestinations }}
   - namespace: {{ $.Values.tenant }}-argocd
-    name: {{ . }}
+    server: https://kubernetes.default.svc
     defaultServiceAccount: argocd
 {{- end }}
 {{- if $.Values.argocd.sourceRepos }}
