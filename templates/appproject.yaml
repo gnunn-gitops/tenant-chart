@@ -40,7 +40,7 @@ spec:
 {{- $namespace := printf "%s-%s" $.Values.tenant $k }}
 {{- $destination := ternary $v.destination $.Values.default.destination (hasKey $v "destination") }}
   - namespace: {{ $namespace }}
-    server: https://kubernetes.default.svc
+    server: {{ $destination }}
     defaultServiceAccount: argocd
 {{- end}}
   # The agent always needs the -argocd namespace for apps-in-any-namespace
@@ -48,7 +48,7 @@ spec:
   # to in-cluster when it copies the AppProject over.
 {{- range $uniqueDestinations }}
   - namespace: {{ $.Values.tenant }}-argocd
-    server: https://kubernetes.default.svc
+    server: {{ $destination }}
     defaultServiceAccount: argocd
 {{- end }}
 {{- if $.Values.argocd.sourceRepos }}

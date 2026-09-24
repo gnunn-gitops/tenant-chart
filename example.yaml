@@ -20,7 +20,6 @@ argocd:
   # Namespace where the tenant Argo CD is located, if
   # set an AppProject for the tenant will be created
   namespace: argocd
-  # Repositories the tenant is limited to
   sourceRepos:
     - '*'
   # Groups for which users will be admins of the AppProject
