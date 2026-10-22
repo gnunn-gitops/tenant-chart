@@ -64,6 +64,7 @@ spec:
         {{ toYaml $.Values.argocd.adminGroups }}
       policies:
         - p, proj:{{ $.Values.tenant }}:admin, applications, *, {{ $.Values.tenant }}/*, allow
+        - p, proj:{{ $.Values.tenant }}:admin, applicationsets, *, {{ $.Values.tenant }}/*, allow
         - p, proj:{{ $.Values.tenant }}:admin, exec, create, {{ $.Values.tenant }}/*, allow
     - description: {{ $.Values.tenant }} users
       name: user
@@ -72,6 +73,7 @@ spec:
       policies:
         - p, proj:{{ $.Values.tenant }}:user, applications, get, {{ $.Values.tenant }}/*, allow
         - p, proj:{{ $.Values.tenant }}:user, applications, sync, {{ $.Values.tenant }}/*, allow
+        - p, proj:{{ $.Values.tenant }}:user, applicationsets, get, {{ $.Values.tenant }}/*, allow
     - description: Pipeline accounts
       name: pipeline
       groups:
